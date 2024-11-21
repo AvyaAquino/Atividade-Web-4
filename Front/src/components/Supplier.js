@@ -45,7 +45,11 @@ const Supplier = () => {
       await axios.delete(`http://localhost:3000/api/fornecedores/${id}`);
       fetchSuppliers();
     } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.message);
+      } else {
       console.error("Erro ao deletar fornecedor", error);
+      }
     }
   }
 

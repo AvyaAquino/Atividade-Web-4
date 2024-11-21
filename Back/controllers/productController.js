@@ -1,3 +1,4 @@
+const Historico = require('../models/historico');
 const Products = require('../models/products');
 
 class ProductController {
@@ -71,6 +72,12 @@ class ProductController {
     static async deletar(req, res) {
         try {
             const { id } = req.params;
+
+            const historicos = await Historico.findOne({ where: { productId: id } });
+
+            if (historicos) {
+                return res.status(400).json({ message: 'Fornecedor não pode ser deletado, pois está associado a um histórico' });
+            }
 
             const deletado = await Products.destroy({
                 where: { id }
