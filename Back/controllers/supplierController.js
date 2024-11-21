@@ -1,4 +1,6 @@
 const Supplier = require('../models/supplier');
+const Historico = require('../models/historico');
+const e = require('cors');
 
 class SupplierController {
     static async criar(req, res) {
@@ -71,6 +73,15 @@ class SupplierController {
         try {
             const { id } = req.params;
 
+            const historicos = await Historico.findOne({
+                where: { supplierId: id }
+            });
+
+            if (historicos) {
+                console.log(historicos);
+                return res.status(400).json({ message: 'Fornecedor não pode ser deletado, pois está associado a um histórico' });
+            }
+
             const deletado = await Supplier.destroy({
                 where: { id }
             });
@@ -82,6 +93,7 @@ class SupplierController {
             return res.status(200).json({ message: 'Fornecedor deletado com sucesso' });
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json(error.message);
         }
     }
